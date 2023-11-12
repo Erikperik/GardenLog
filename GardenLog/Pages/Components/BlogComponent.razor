@@ -1,0 +1,48 @@
+﻿@page "/BlogComponent"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@using GardenLog.Models
+@using GardenLog.Services
+@using System
+
+@inject CreateJsonBlogPostService CreateJsonBlogPost
+@inject ILogger<BlogComponent> Logger
+
+    @* Summary:
+    A component that creates a form and creates a JSON-file using CreateBlogPostService. *@
+
+<PageTitle>Counter</PageTitle>
+
+<EditForm Model="@thisPost" OnValidSubmit="@Submit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label class="control-label">Title:</label>
+    <InputText class="form-control" @bind-Value="thisPost.title" /><br />
+    <label class="control-label">Content:</label>
+    <InputTextArea class="form-control" @bind-Value="thisPost.content" /><br />
+    <button type="submit">Submit</button>
+</EditForm>
+
+<p>@successMessage</p>
+
+
+
+@code {
+    [Parameter]
+    public BlogPost thisPost { get; set; } = new();
+    string successMessage = "";
+
+    protected override void OnInitialized() => thisPost ??= new();
+
+    private void Submit()
+    {
+        thisPost.date = DateTime.Now.ToLongDateString();
+        Logger.LogInformation("Title = {title}", thisPost.title);
+        Logger.LogInformation("Date = {date}", thisPost.date);
+        Logger.LogInformation("Content = {content}", thisPost.content);
+        CreateJsonBlogPost.CreateJsonFile(thisPost);
+        successMessage = "Post was created.";
+    }
+}

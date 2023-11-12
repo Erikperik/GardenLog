@@ -1,0 +1,51 @@
+﻿@page
+@model WeatherModel
+@using GardenLog.Pages;
+@using GardenLog.Models;
+@using GardenLog.Services;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+
+
+@{
+  
+    <h2>Weather</h2>
+    <h3>Current weather in the garden</h3>
+    <div class="col-3 p-3 mb-2">
+        <table class="table table-success table-striped">
+            <tr><td scope="col">Weather</td><td>@Model.currentWeatherDescription</td></tr>
+            <tr><td scope="col">Temperature</td><td>@($"{Model.WeatherForecast.current_weather.temperature}{Model.WeatherForecast.current_weather_units.temperature}")</td></tr>
+            <tr><td scope="col">Wind speed</td><td>@($"{Model.WeatherForecast.current_weather.windspeed}{Model.WeatherForecast.current_weather_units.windspeed}")</td></tr>
+            <tr><td scope="col">Wind direction</td><td>@($"{Model.WeatherForecast.current_weather.winddirection}{Model.WeatherForecast.current_weather_units.winddirection}")</td></tr>
+        </table>
+    </div>
+    <br />
+
+    // Creates string[] for upcoming weeks temperature min/max
+    string[] weeklyTemperature = new string[Model.WeatherForecast.daily_data.time.Length];
+    string[] weeklyWind = new string[Model.WeatherForecast.daily_data.time.Length];
+    for (int j = 0; j < Model.WeatherForecast.daily_data.time.Length; j++)
+    {
+        weeklyTemperature[j] = $"{Model.WeatherForecast.daily_data.temperature_2m_min[j]} - {Model.WeatherForecast.daily_data.temperature_2m_max[j]}";
+        weeklyWind[j] = $"{Model.WeatherForecast.daily_data.windspeed_10m_max[j]} ({Model.WeatherForecast.daily_data.windgusts_10m_max[j]})";
+    }
+
+    <h3>Weather upcoming week in the garden</h3>
+    <div class="col-5 p-3 mb-2">
+        <table class="table table-success table-striped">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Temperature</th>
+                <th scope="col">Wind (gusts)</th>
+            </tr>
+            @for (int j = 0; j < Model.WeatherForecast.daily_data.time.Length; j++)
+            {
+                <tr>
+                    <td>@Model.WeatherForecast.daily_data.time[j]</td>
+                    <td>@($"{weeklyTemperature[j]}{Model.WeatherForecast.current_weather_units.temperature}")</td>
+                    <td>@($"{weeklyWind[j]}{Model.WeatherForecast.current_weather_units.windspeed}")</td>
+                </tr>
+            }
+        </table>
+    </div>
+}

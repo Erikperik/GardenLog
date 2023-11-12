@@ -1,0 +1,22 @@
+﻿@page
+@model GardenLog.Pages.LogbookModel
+@using GardenLog.Services;
+@using GardenLog.Models;
+
+<body>
+    @{
+        // order posts in list in descending date
+        var descPostList = @Model.postList.OrderByDescending(post => post.date);
+
+        // post all posts in the ordered list
+        foreach (BlogPost post in descPostList)
+        {
+
+            <br />
+            <h3>@post.title</h3>
+            <p><i>@post.date</i></p>
+            <p>@post.content</p>
+        }
+}
+        <footer class="stickyfooter"><a href="https://veganipsum.me/"><i>This site uses Vegan Ipsum</i></a></footer>
+</body>
